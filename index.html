@@ -2,6 +2,11 @@
   <head>
     <title>Tetris</title>
     <style>
+      #piecekeeper {
+        border: 1px solid gray;
+        background-color: #aaaaaa;
+        margin-right: 5px;
+      }
       #playfield {
         border: 1px solid gray;
         position: static;
@@ -9,7 +14,7 @@
       #preview {
         border: 1px solid gray;
         background-color: #EEEEEE;
-        margin-right: 5px;
+        margin-left: 5px;
         margin-bottom: 10px;
       }
       #restart {
@@ -28,6 +33,7 @@
       #legend {
         margin: 5px;
         font-family: 'Courier New', Courier, monospace;
+        font-size: small;
       }
       .table {
         display: table;
@@ -65,7 +71,7 @@
       <div class="table">
         <div class="row">
           <div class="cell">
-            <canvas id="preview" width="60" height="60""></canvas>
+            <canvas id="piecekeeper" width=60 height=60></canvas>
           </div>
           <div class="cell">
             <canvas id="playfield" width=200 height=400></canvas>
@@ -74,6 +80,7 @@
             <div class="table">
               <div class="row">
                 <div class="cell">
+                  <canvas id="preview" width="60" height="60""></canvas>
                   <!--
                   <canvas id="preview" width="80" height="80"></canvas>
                   -->
@@ -99,7 +106,7 @@
                     SPACE ... drop <br>
                     ESC ..... pause <br>  
                     R ....... restart <br>
-                    <!-- B ....... switch piece <br>  -->
+                    B ....... switch piece <br>
                   </div>
                 </div>    
               </div>

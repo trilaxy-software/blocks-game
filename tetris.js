@@ -63,6 +63,16 @@ class Piece {
     }
   }
 
+  drawPieceKeeper() {
+    let block = game.keeperBlocksize
+    game.ctxPieceKeeper.fillStyle = this.color
+    for( let i = 0; i < this.shape.length; i++ ) {
+      let c = this.letter2coordinates( this.shape[ i ] );
+      game.ctxPieceKeeper.fillRect( c.x * block, 
+        c.y * block, block, block )
+    }
+  }
+
   move( x, y ) {
 
     // game.sound1.start()
@@ -225,6 +235,13 @@ function drawPreview() {
   }
 }
 
+function drawPieceKeeper() {
+  game.ctxPieceKeeper.clearRect( 0, 0, game.canvas.width, game.canvas.height )
+  if( game.keepPiece ) {
+    game.keepPiece.drawPieceKeeper()  
+  }
+}
+
 function animate() {
   if( !game.over && !game.pause ) {
     game.timeout = setTimeout( move, game.speed )  
@@ -240,7 +257,7 @@ function move() {
       drawAll()
     }
     else {
-      game.debug.innerHTML = newPiece.x + "/" + newPiece.right
+      //game.debug.innerHTML = newPiece.x + "/" + newPiece.right
       game.scoreCount += game.factor
       requestAnimationFrame( animate )
       drawAll()
@@ -329,21 +346,33 @@ function keypress( ev ) {
     return
   }
   else if( ev.keyCode == B ) {
-    // if( game.switchCount == 0 ) {
-    //   game.switchCount = 1
-    //   let switchPiece = game.nextPiece
-    //   switchPiece.x = game.piece.x
-    //   switchPiece.y = game.piece.y
-    //   game.nextPiece = game.piece
-    //   game.nextPiece.x = 0
-    //   game.nextPiece.y = 0
-    //   game.piece = switchPiece
-    //   if( game.piece.collision() ) {
-    //     game.piece = game.piece.move( 0, -1 )
-    //   }
-    //   drawPreview()
-    //   drawAll()
-    // }
+    if( game.switchCount == 0 ) {
+      if( !game.keepPiece ) {
+        game.keepPiece = game.piece
+        game.keepPiece.x = 0
+        game.keepPiece.y = 0
+        game.piece = game.nextPiece
+        if( game.piece.collision() ) {
+          game.piece = game.piece.move( 0, -1 )
+        }  
+      }
+      else {
+        game.switchCount = 1
+        let switchPiece = game.keepPiece
+        switchPiece.x = game.piece.x
+        switchPiece.y = game.piece.y
+        game.keepPiece = game.piece
+        game.keepPiece.x = 0
+        game.keepPiece.y = 0
+        game.piece = switchPiece
+        if( game.piece.collision() ) {
+          game.piece = game.piece.move( 0, -1 )
+        }  
+      }
+      drawPieceKeeper()
+      drawPreview()
+      drawAll()
+    }
     return
   }
   else {
@@ -436,13 +465,16 @@ function start() {
   game.score = document.querySelector( '#score' )
   game.restart = document.querySelector( '#restart' )
   game.preview = document.querySelector( '#preview' )
+  game.pieceKeeper  = document.querySelector( '#piecekeeper' )
 
   game.ctx = game.canvas.getContext( '2d' )
   game.ctxPreview = game.preview.getContext( '2d' )
+  game.ctxPieceKeeper = game.pieceKeeper.getContext( '2d' )
   
   game.blocksize = game.canvas.width / game.playFieldWidth  
   game.previewBlocksize = Math.min( game.preview.width, game.preview.height ) / 4
-  
+  game.keeperBlocksize = Math.min( game.pieceKeeper.width, game.pieceKeeper.height ) / 4
+
   document.body.onkeydown = keypress
   game.canvas.onkeydown = keypress
 
