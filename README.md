@@ -1,2 +1,1 @@
-# blocks-game
-Falling blocks.
+Minimal Tetris implementation.
