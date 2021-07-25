@@ -13,10 +13,22 @@ class Animation {
   backgroundColor = 'white'
   frameMillis = 10
   animatedObjects = []
+  running = true
 
   constructor( canvas ) {
     this.canvas = canvas
     this.ctx = canvas.getContext( '2d' )
+    let me = this
+    document.body.onkeydown = ev => { me.keypress( ev ) }
+  }
+
+  keypress( ev ) {
+    if( ev.keyCode == 27 ) {
+      this.running = !this.running
+      if( this.running ) {
+        this.animate()
+      }
+    }
   }
 
   /**
@@ -26,6 +38,17 @@ class Animation {
     this.canvas.width = window.innerWidth
     this.canvas.height = window.innerHeight
     document.body.style.margin = 0
+  }
+
+  setAutoMaximize( on ) {
+    if( on ) {
+      let me = this
+      window.onresize = () => { me.maximize() }
+      this.maximize()
+    }
+    else {
+      window.onresize = null
+    }
   }
 
   /**
