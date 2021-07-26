@@ -145,12 +145,3 @@ function dot( ctx, x, y, r, color, alpha ) {
 }
 
 
-// move this to explosion.html
-
-let canvas = document.querySelector( "canvas" )
-let ctx = canvas.getContext( '2d' )
-let animation = new Animation( canvas )
-animation.backgroundColor = 'black'
-animation.maximize()
-animation.add( new CirclingOrigin( ctx, canvas.width / 2, canvas.height / 2, 100, .01 ) )
-animation.start()
