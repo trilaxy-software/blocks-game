@@ -30,20 +30,22 @@ class Trilaxy {
   }
 
   animate() {
-    this.distance += .1
-    if( this.distance > this.size ) {
-      this.distance = this.size
+    if( this.distance < this.size ) {
+      // have galaxies move away from common center until a max distance is reached
+      this.distance += .1
     }
-    for( let i = 0; i < this.galaxies.length; i++ ) {
-      this.galaxies[ i ].distance = this.distance
-      this.galaxies[ i ].animate()
-    } 
+    // for( let i = 0; i < this.galaxies.length; i++ ) {
+    //   this.galaxies[ i ].distance = this.distance
+    //   this.galaxies[ i ].animate()
+    // } 
+    this.galaxies.forEach( galaxy => {
+      galaxy.distance = this.distance
+      galaxy.animate()
+    } )
   }
 
   draw() {
-    for( let i = 0; i < this.galaxies.length; i++ ) {
-      this.galaxies[ i ].draw()
-    } 
+    this.galaxies.forEach( galaxy => galaxy.draw() )
     this.ctx.globalAlpha = 1
     this.ctx.font = "30px Arial";
     this.ctx.fillStyle = 'white'
@@ -83,18 +85,12 @@ class Galaxy {
     this.radPosition -= this.radSpeed
     this.x = this.trilaxy.x + Math.sin( this.radPosition ) * this.distance
     this.y = this.trilaxy.y + Math.cos( this.radPosition ) * this.distance
-    for( let i = 0; i < this.stars.length; i++ ) {
-      let star = this.stars[ i ]
-      star.animate()
-    }
+    this.stars.forEach( star => star.animate() ) 
   }
 
   draw() {
     dot( this.trilaxy.ctx, this.x, this.y, this.size / 30, this.color )
-    for( let i = 0; i < this.stars.length; i++ ) {
-      let star = this.stars[ i ]
-      star.draw()
-    }
+    this.stars.forEach( star => star.draw() ) 
   }
 
 }
@@ -117,6 +113,21 @@ class Star {
     this.distance += this.distanceSpeed
     if( this.distance > this.galaxy.size ) {
       this.distance = 0
+      this.explosion = null
+    }
+    if( !this.explosion && Math.random() > 0.99999 ) {
+      this.explosion = new Explosion( this.ctx, this )
+      this.explosion.lifetime = 200
+      this.explosion.particleSpeedMin = 0.01
+      this.explosion.particleSpeedMax = .5
+      this.explosion.particleCount = 30
+      //this.explosion.randomColors = true
+      this.explosion.color = 'yellow'
+      this.explosion.fadeFactor = 2
+      this.explosion.start()
+    }
+    if( this.explosion ) {
+      this.explosion.animate()
     }
   }
 
@@ -128,10 +139,17 @@ class Star {
     return this.galaxy.y + Math.cos( this.radPosition ) * this.distance
   }
 
+  getColor() {
+    return this.color
+  }
+
   draw() {
     let x = this.getX()
     let y = this.getY()
     dot( this.ctx, x, y, this.size, this.color )
+    if( this.explosion ) {
+      this.explosion.draw()
+    }
   }
 
   

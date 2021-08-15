@@ -12,6 +12,7 @@ class Explosion {
   lifetime = 200
   randomColors = false
   fadeFactor = 2
+  //color = 'white'
 
   /**
    * @param ctx canvas 2d context
@@ -30,21 +31,29 @@ class Explosion {
       let angle = Math.random() * Math.PI * 2
       let speed = this.particleSpeedMin + Math.random() * speedRange
       let size = this.particleSizeMin + Math.random() * sizeRange
-      let color = 'white' 
       if( this.randomColors ) {
-        color = randomColor()
+        this.color = randomColor()
       }
-      let particle = new Particle( this.ctx, this.origin, angle, size, color, speed, this.lifetime, this.fadeFactor )
+      else {
+        if( !this.color ) {
+          this.color = this.origin.getColor()
+        }
+      }
+      let particle = new Particle( this.ctx, this.origin, angle, size, this.color, speed, this.lifetime, this.fadeFactor )
       this.particles.push( particle )
     }
   }
 
   animate() {
-    this.particles.forEach( particle => particle.animate() )
+    if( this.particles ) {
+      this.particles.forEach( particle => particle.animate() )
+    }
   }
 
   draw() {
-    this.particles.forEach( particle => particle.draw() )
+    if( this.particles ) {
+      this.particles.forEach( particle => particle.draw() )
+    }
   }
 
 }
@@ -71,8 +80,8 @@ class Particle {
       this.finished = true
     }
     else {
-      this.x = this.origin.x + this.pos * this.sin
-      this.y = this.origin.y + this.pos * this.cos
+      this.x = this.origin.getX() + this.pos * this.sin
+      this.y = this.origin.getY() + this.pos * this.cos
       this.pos += this.speed
       this.time++  
     }
@@ -122,6 +131,14 @@ class CirclingOrigin {
         this.explosion.animate()
       }
     }
+  }
+
+  getX() {
+    return this.x
+  }
+
+  getY() {
+    return this.y
   }
 
   draw() {
